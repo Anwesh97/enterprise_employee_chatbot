@@ -1,0 +1,252 @@
+<!-- Top Navigation Bar -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="brand-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="brand-name">Enterprise Copilot</span>
+  </div>
+  <div class="nav-right">
+    <div class="employee-selector" *ngIf="selectedEmployee">
+      <label for="empSelect">Active Employee:</label>
+      <select id="empSelect" (change)="selectEmployee(employees[$any($event.target).selectedIndex])" class="emp-select">
+        <option *ngFor="let emp of employees; let i = index" [selected]="emp.id === selectedEmployee?.id">
+          {{ emp.name }} ({{ emp.id }})
+        </option>
+      </select>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Dashboard Content -->
+<main class="dashboard" *ngIf="selectedEmployee">
+
+  <!-- Welcome Header -->
+  <header class="welcome-header">
+    <div class="welcome-text">
+      <h1>Welcome back, <span class="highlight">{{ selectedEmployee.name }}</span></h1>
+      <p class="subtitle">Here's your employee dashboard overview</p>
+    </div>
+    <div class="profile-badge">
+      <div class="avatar">{{ selectedEmployee.name.charAt(0) }}</div>
+      <div class="profile-info">
+        <span class="profile-name">{{ selectedEmployee.name }}</span>
+        <span class="profile-role">{{ selectedEmployee.project }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- KPI Cards Row -->
+  <section class="kpi-row">
+    <div class="kpi-card kpi-leaves">
+      <div class="kpi-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-value">{{ totalLeaves }}</span>
+        <span class="kpi-label">Total Leaves Left</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-attendance">
+      <div class="kpi-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-value">{{ presentDays }}</span>
+        <span class="kpi-label">Days Present</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-courses">
+      <div class="kpi-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 14l9-5-9-5-9 5 9 5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 14l6.16-3.422a12 12 0 01.84 4.11C19 18.09 15.866 20 12 20s-7-1.91-7-5.312a12 12 0 01.84-4.11L12 14z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-value">{{ completedCourses }}/{{ learning.length }}</span>
+        <span class="kpi-label">Courses Completed</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-holiday">
+      <div class="kpi-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-value" *ngIf="nextHoliday">{{ daysUntil(nextHoliday.date) }}d</span>
+        <span class="kpi-value" *ngIf="!nextHoliday">—</span>
+        <span class="kpi-label">Next Holiday</span>
+        <span class="kpi-sub" *ngIf="nextHoliday">{{ nextHoliday.holidayName }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Grid -->
+  <section class="dashboard-grid">
+
+    <!-- Employee Profile Card -->
+    <div class="card profile-card">
+      <div class="card-header">
+        <h2>Employee Profile</h2>
+      </div>
+      <div class="card-body">
+        <div class="profile-detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Employee ID</span>
+            <span class="detail-value">{{ selectedEmployee.id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Full Name</span>
+            <span class="detail-value">{{ selectedEmployee.name }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Manager</span>
+            <span class="detail-value">{{ selectedEmployee.manager }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Project</span>
+            <span class="detail-value">{{ selectedEmployee.project }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">{{ selectedEmployee.location }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value email-value">{{ selectedEmployee.email }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leave Balance Card -->
+    <div class="card leave-card">
+      <div class="card-header">
+        <h2>Leave Balance</h2>
+      </div>
+      <div class="card-body" *ngIf="leaveBalance">
+        <div class="leave-bars">
+          <div class="leave-bar-item">
+            <div class="leave-bar-header">
+              <span class="leave-type">Annual</span>
+              <span class="leave-count">{{ leaveBalance.annualLeaves }} days</span>
+            </div>
+            <div class="leave-bar-track">
+              <div class="leave-bar-fill annual-fill" [style.width.%]="(leaveBalance.annualLeaves / 20) * 100"></div>
+            </div>
+          </div>
+          <div class="leave-bar-item">
+            <div class="leave-bar-header">
+              <span class="leave-type">Sick</span>
+              <span class="leave-count">{{ leaveBalance.sickLeaves }} days</span>
+            </div>
+            <div class="leave-bar-track">
+              <div class="leave-bar-fill sick-fill" [style.width.%]="(leaveBalance.sickLeaves / 10) * 100"></div>
+            </div>
+          </div>
+          <div class="leave-bar-item">
+            <div class="leave-bar-header">
+              <span class="leave-type">Casual</span>
+              <span class="leave-count">{{ leaveBalance.casualLeaves }} days</span>
+            </div>
+            <div class="leave-bar-track">
+              <div class="leave-bar-fill casual-fill" [style.width.%]="(leaveBalance.casualLeaves / 12) * 100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Table Card -->
+    <div class="card attendance-card">
+      <div class="card-header">
+        <h2>Attendance Log</h2>
+        <span class="badge">{{ attendance.length }} records</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of attendance">
+                <td>{{ formatDate(a.date) }}</td>
+                <td><span class="status-badge" [ngClass]="getStatusClass(a.status)">{{ a.status }}</span></td>
+                <td>{{ formatTime(a.checkIn) }}</td>
+                <td>{{ formatTime(a.checkOut) }}</td>
+              </tr>
+              <tr *ngIf="attendance.length === 0">
+                <td colspan="4" class="no-data">No attendance records found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learning Summary Card -->
+    <div class="card learning-card">
+      <div class="card-header">
+        <h2>Mandatory Training</h2>
+        <span class="badge warning" *ngIf="pendingCourses > 0">{{ pendingCourses }} Pending</span>
+      </div>
+      <div class="card-body">
+        <div class="course-list">
+          <div class="course-item" *ngFor="let l of learning">
+            <div class="course-info">
+              <span class="course-name">{{ l.courseName }}</span>
+              <span class="course-due">Due: {{ formatDate(l.dueDate) }}</span>
+            </div>
+            <span class="status-badge" [ngClass]="getStatusClass(l.status)">{{ l.status }}</span>
+          </div>
+          <div *ngIf="learning.length === 0" class="no-data">No training records found.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Holidays Card -->
+    <div class="card holidays-card">
+      <div class="card-header">
+        <h2>Upcoming Holidays</h2>
+      </div>
+      <div class="card-body">
+        <div class="holiday-list">
+          <div class="holiday-item" *ngFor="let h of holidays">
+            <div class="holiday-date-badge">
+              <span class="holiday-month">{{ h.date | date:'MMM' }}</span>
+              <span class="holiday-day">{{ h.date | date:'dd' }}</span>
+            </div>
+            <div class="holiday-info">
+              <span class="holiday-name">{{ h.holidayName }}</span>
+              <span class="holiday-days-left">{{ daysUntil(h.date) }} days away</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" *ngIf="loading">
+  <div class="spinner"></div>
+</div>
